@@ -1,0 +1,107 @@
+---
+title: "trout_salamanders_activities"
+author: "Juliet"
+date: "8/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+```{r}
+#Read in the data using read_csv() with here(), store as mack_verts
+mack_verts <- read_csv(here::here("data", "AS00601.csv"))
+mack_verts
+```
+
+```{r}
+mack_verts <- mack_verts %>% clean_names()
+mack_verts
+```
+```{r}
+#Store the 5th value in column “WEIGHT” as mc_wt_5. Check by looking at your data frame to confirm.
+#Store the 8th - 20th value in the “LENGTH1” column as mc_length_8_20. Check by looking at your data frame to confirm.
+#Store everything in column SAMPLEDATE as a vector called mc_dates
+
+mc_wt_5 <- mack_verts$weight[5]
+mc_wt_5
+
+mc_length_8_20 <- mack_verts$length1[8:20]
+mc_length_8_20
+
+mc_dates <- mack_verts$sampledate
+mc_dates
+
+```
+
+```{r}
+#make a salamander 
+
+#adelies <- penguins %>% 
+#  filter(species == "Adelie") %>% 
+#  mutate(body_mass_kg = body_mass_g / 1000)
+
+mc_salamanders <- data.frame(mack_verts %>% 
+  dplyr::filter(species == "DITE"))
+
+mc_salamanders
+
+class(mc_salamanders)
+```
+
+```{r}
+mc_salamanders_plot <- ggplot(data = mc_salamanders, aes(x = length1, y = weight)) +
+  geom_point(aes(color = "blue"), 
+             size = 1,
+             alpha = 0.4) +
+             theme_dark() +
+             labs(x = "Snout-Vent Length (mm)",
+                  y = "Weight (g)",
+                  title = "Weight as a function of Snout-Vent Length",
+                  subtitle = "Do larger salamanders weigh more?",
+                  caption = "https://portal.edirepository.org/nis/metadataviewer?packageid=knb-lter-and.4027.14")
+mc_salamanders_plot
+
+#export
+ggsave(here::here("figs", "mc_salamanders_plot.png"), plot = mc_salamanders_plot)
+```
+
+
+```{r}
+#subset trout
+
+#mc_salamanders <- data.frame(mack_verts %>% 
+#  dplyr::filter(species == "DITE"))
+
+mc_trout <- data.frame(mack_verts %>% 
+  dplyr::filter(species == "ONCL"))
+
+mc_trout
+
+mc_trout_plot <- ggplot(data = mc_trout, aes(x=length1, y = weight)) +
+  geom_point(aes(color = reach)) +
+  scale_color_manual(values = c("red", "purple", "cyan")) +
+  labs(x = "Snout-Fork Length (mm)",
+       y= "Weight(g)",
+       title = "Trout Weight as a function of Snout-Fork Length") +
+  facet_wrap(~reach)
+
+mc_trout_plot
+
+ggsave(here::here("figs", "mc_trout_plot.png"), plot = mc_trout_plot)
+
+```
+
+
+
+
+
+
+
+
+
+
